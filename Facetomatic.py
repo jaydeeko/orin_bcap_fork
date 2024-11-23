@@ -70,5 +70,5 @@ def main(stl_file):
 
 
 # Replace 'your_file.stl' with your STL file path
-stl_file = 'your_file.stl'
+stl_file = 'Spyro_Gem.stl'
 main(stl_file)
