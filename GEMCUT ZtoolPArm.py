@@ -5,14 +5,15 @@ from bCAPClient.bcapclient import BCAPClient
 import math
 import time
 import numpy as np
-
+import GemCutHardcode
+import
 
 
 import numpy as np
 from math import radians, degrees
 from scipy.spatial.transform import Rotation as R
 
-
+#TODO learn how to set speed in code
 
 
 
@@ -66,6 +67,8 @@ try:
     for pitch in pitchincrements:
         for roll in indexincrements:
             yaw = 0
+
+
             facet = [base_position["X"], base_position["Y"], base_position["Z"], base_position["Pitch"], base_position["Indexdeg"], yaw]
             cut_position = GrindCut(facet, roll, pitch)
             Pose = [cut_position, "CP", "@E"]
@@ -86,6 +89,17 @@ try:
             Pose = [cut_position, "CP", "@E"]
             client.robot_move(robot_handle, 2, Pose, move_speed)
 
+
+'''
+Dependent on cut:
+Rough pass -- approach from very high. 0.5mm 
+mid pass -- 0.5mm approach, 
+
+
+For each facet
+
+
+'''
 
 
 
