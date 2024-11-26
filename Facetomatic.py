@@ -2,7 +2,7 @@ import numpy as np
 from stl import mesh
 import matplotlib.pyplot as plt
 import csv
-
+import math
 
 def extract_plane_equations(stl_mesh):
     """
@@ -44,15 +44,49 @@ def visualize_endpoints(stl_mesh):
     plt.show()
 
 
+
+
+
+def calculate_rotation_and_pitch(A, B, C):
+    """
+    Calculate the rotation around the Z-axis (azimuth) and pitch from the XY-plane for a plane.
+    :param A: X-coefficient of the plane equation
+    :param B: Y-coefficient of the plane equation
+    :param C: Z-coefficient of the plane equation
+    :return: Azimuth (degrees), Pitch (degrees)
+    """
+    # Azimuth (rotation around Z-axis) is the angle of the normal vector projection on the XY plane
+    azimuth = math.degrees(math.atan2(B, A))
+
+    # Pitch is the angle between the normal vector and the XY-plane
+    pitch = math.degrees(math.atan2(C, math.sqrt(A ** 2 + B ** 2)))
+
+    return azimuth, pitch
+
+
 def export_planes_to_csv(planes, output_file="planes.csv"):
     """
-    Export plane equations and Z-intercepts to a CSV file.
+    Export plane equations, Z-intercepts, rotation around Z-axis, and pitch to a CSV file.
     """
     with open(output_file, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["A", "B", "C", "D", "Z-Intercept"])
-        writer.writerows(planes)
+        writer.writerow(["A", "B", "C", "D", "Z-Intercept", "Azimuth (deg)", "Pitch (deg)"])
+
+        rows = []
+        for plane in planes:
+            A, B, C, D = plane[:4]
+            # Calculate Z-intercept (if C != 0)
+            z_intercept = -D / C if C != 0 else None
+            # Calculate azimuth and pitch
+            azimuth, pitch = calculate_rotation_and_pitch(A, B, C)
+            rows.append([A, B, C, D, z_intercept, azimuth, pitch])
+
+        writer.writerows(rows)
     print(f"Planes exported to {output_file}")
+
+
+
+
 
 
 def main(stl_file):

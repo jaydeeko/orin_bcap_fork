@@ -1,18 +1,10 @@
-import numpy as np
-from math import radians, degrees
-from scipy.spatial.transform import Rotation as R
-from bCAPClient.bcapclient import BCAPClient
-import math
 import time
-import numpy as np
-import GemCutHardcode
-import GemCutSoftcode
-from math import radians, degrees
 
+from bCAPClient.bcapclient import BCAPClient
 
 #TODO learn how to set speed in code
 
-
+# Example usage:
 
 
 
