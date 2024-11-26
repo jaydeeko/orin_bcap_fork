@@ -6,7 +6,7 @@ ZtoTableOffset = 150
 #z offset based on grit
 discheight = [2, 2, 2, 12]
 
-#X1Y1, X2Y2 that cuts oscilate between
+#X1Y1, X2Y2 that cuts oscillate between
 X1Y1 = [200, 200]
 X2Y2 = [200, 205]
 

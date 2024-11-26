@@ -6,12 +6,9 @@ import math
 import time
 import numpy as np
 import GemCutHardcode
-import
-
-
-import numpy as np
+import GemCutSoftcode
 from math import radians, degrees
-from scipy.spatial.transform import Rotation as R
+
 
 #TODO learn how to set speed in code
 
