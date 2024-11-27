@@ -79,16 +79,12 @@ try:
             client.robot_move(robot_handle, 2, Pose, move_speed)
 
 
-'''
-Dependent on cut:
-Rough pass -- approach from very high. 0.5mm 
-mid pass -- 0.5mm approach, 
 
-
-For each facet
-
-
-'''
+# Dependent on cut:
+# Rough pass -- approach from very high. 0.5mm
+# mid pass -- 0.5mm approach,
+#
+# For each facet
 
 
 
