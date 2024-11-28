@@ -40,12 +40,12 @@ try:
 
 
      # Base position with fixed X, Y values and starting angles for Roll, Pitch, and Yaw at -90 degrees
-    base_position = {"X": 0, "Y": -360, "Z": 200}
+    #base_position = {"X": 0, "Y": -360, "Z": 200}
 
     # Possible increments from the base position for Roll, Pitch, and Yaw (-45, -20, 0, 20, 45)
     indexincrements = [-200, 120, 175, 210, 310]
     pitchincrements = [0, 10, 20, 45]
-    initial_position = [0, -360.5, 200, 90, 0, 0, -3]
+    #initial_position = [0, -360.5, 300, 90, 0, 0, -3]
 
     #Pose = [initial_position, "P", "@E"]
     #client.robot_move(robot_handle, 2, Pose, move_speed)
@@ -57,53 +57,76 @@ try:
 
     Pose = [joint_positions, "J"]
     client.robot_move(robot_handle, 1, Pose, move_speed)
-    print("Start loop")
 
-    # Open and read the CSV file
-    with open("planes.csv", mode='r') as file:
+
+    with open("planes.csv", mode="r") as file:
+        # Use csv.DictReader to read rows with proper column headers
         reader = csv.DictReader(file)
 
+        # Trim spaces from headers
+        reader.fieldnames = [header.strip() for header in reader.fieldnames]
+
+        # Debug column headers
+        print("Trimmed Headers in CSV:", reader.fieldnames)
+
+
+
         for row in reader:
+            row = {key.strip(): value.strip() for key, value in row.items()}
 
-            z_offset = float(row["ZIntercept"]) if row["Z-Intercept"] != "N/A" else (ZtoTableOffset + row["GirdleZ"])
-            index = float(row["Index"]) * indexwheelreal
-            pitch = float(row["Pitch"])
-            girdle_z = float(row["GirdleZ"]) if row["GirdleZ"] != "N/A" else 0.0
-            yaw = 0 # Define the yaw (static in this example)
+            if float(row["Pitch"]) > 0:
 
-
-            # Construct the facet based on the row and base position
-            facX = base_position["X"]
-            facY = base_position["Y"]
-            facZ = z_offset
-            facP = pitch
-            facI = index #in degrees
-            facY = yaw
+                z_offset = float(row["ZIntercept"]) if row["ZIntercept"] != "N/A" else row["GirdleZ"]
+                z_offset =+ ZtoTableOffset
 
 
-            # Initial position
-            facet = [facX, facY, facZ, facP,  facI, facY]
-            cut_position = GrindCut(facet)
-            Pose = [cut_position, "CP", "@E"]
-            client.robot_move(robot_handle, 2, Pose, move_speed)
 
-            facet = [facX, facY, facZ-45, facP, facI, facY]
-            cut_position = GrindCut(facet)
-            Pose = [cut_position, "CP", "@E"]
-            client.robot_move(robot_handle, 2, Pose, move_speed)
-
-            facet = [facX, facY+30, facZ-50, facP, facI, facY]
-            cut_position = GrindCut(facet)
-            Pose = [cut_position, "CP", "@E"]
-            client.robot_move(robot_handle, 2, Pose, move_speed)
+                index = float(row["Index"]) * indexwheelreal
+                pitch = float(row["Pitch"])
+                girdle_z = float(row["GirdleZ"]) if row["GirdleZ"] != "N/A" else 0.0
+                yaw = 0 # Define the yaw (static in this example)
 
 
-            facet = [facX, facY+30, facZ, facP, facI, facY]
-            cut_position = GrindCut(facet)
-            Pose = [cut_position, "CP", "@E"]
-            client.robot_move(robot_handle, 2, Pose, move_speed)
+                # Construct the facet based on the row and base position
+                facX = X1Y1[0]
+                facY = X1Y1[1]
+                facZ = z_offset
+                facP = pitch
+                #TODO invert pitch (*-1) for pavilion vs crown
+                facI = index #in degrees
+                facYw = yaw
 
-                # Define the pose and move the robot
+                #TODO Set TCP based on Z intercept
+                print(X1Y1[1])
+                print(facY)
+
+                # Initial position
+                facet = [facX, facY, facZ, facP,  facI, facYw]
+                cut_position = GrindCut(facet)
+                Pose = [cut_position, "CP", "@E"]
+                print(Pose)
+                client.robot_move(robot_handle, 2, Pose, move_speed)
+
+                facet = [facX, facY, facZ-45, facP, facI, facYw]
+                cut_position = GrindCut(facet)
+                Pose = [cut_position, "CP", "@E"]
+                client.robot_move(robot_handle, 2, Pose, move_speed)
+
+                facet = [facX, facY+30, facZ-50, facP, facI, facYw]
+                cut_position = GrindCut(facet)
+                Pose = [cut_position, "CP", "@E"]
+                client.robot_move(robot_handle, 2, Pose, move_speed)
+
+                #TODO cycle between x0y0 and x1y1 lowering Z from Zstart down to Zfinal
+
+                facet = [facX, facY+30, facZ, facP, facI, facY]
+                cut_position = GrindCut(facet)
+                Pose = [cut_position, "CP", "@E"]
+                client.robot_move(robot_handle, 2, Pose, move_speed)
+
+                #TODO cycle between x0y0 and x1y1 at final Z, number of counts equal to flatsweep
+
+                    # Define the pose and move the robot
 
 
 

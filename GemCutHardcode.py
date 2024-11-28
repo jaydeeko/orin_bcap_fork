@@ -1,11 +1,16 @@
 
 
 #Height from table to aluminum plate
-ZtoTableOffset = 150
+ZtoTableOffset = 250
 
 #z offset based on grit:
 # Rough (360), Medium (1200), Polish (3000), Final polish  (50k)
-discheight = [2, 2, 2, 12]
+
+#TODO use discheight
+#TODO use Zcutstep
+#TODO use speedbadse
+#TODO use flatsweep
+
 
 #                DiscHeight          Zcutstep            SpeedBase      FlatSweep
 Rough       =    [2,                   .1,                  300,           2]
@@ -14,8 +19,8 @@ Polish      =    [2,                   .01,                 150,           10]
 FinalPolish =    [12,                  .001,                 100,          50]
 
 #X1Y1, X2Y2 that cuts oscillate between
-X1Y1 = [200, 200]
-X2Y2 = [200, 205]
+X1Y1 = [0, -450]
+X2Y2 = [0, -350]
 
 
 #        Rough (360), Medium (1200), Polish (3000), Final polish  (50k)
@@ -24,6 +29,5 @@ X2Y2 = [200, 205]
 
 indexwheelreal= 360/96
 
-#Number of "flat transitions" in the process
-flatsweep = [2, 5, 10, 50]
+
 
