@@ -29,9 +29,9 @@ import struct
 from ctypes import *
 from datetime import datetime
 
-from orinexception import *
+from Python.bCAPClient.orinexception import *
 from threading import Lock
-from variant import VarType
+from Python.bCAPClient.variant import VarType
 
 class BCAPClient:
   _BCAP_SOH = 0x1

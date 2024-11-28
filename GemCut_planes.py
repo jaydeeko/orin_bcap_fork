@@ -1,8 +1,8 @@
 import time
-#import bcapclient
 
+import csv
 
-from bCAPClient.bcapclient import BCAPClient
+from Python.bCAPClient.bcapclient import BCAPClient
 
 
 from GemCutFunctions import *
@@ -60,12 +60,12 @@ try:
     print("Start loop")
 
     # Open and read the CSV file
-    with open(planes.csv, mode='r') as file:
+    with open("planes.csv", mode='r') as file:
         reader = csv.DictReader(file)
 
         for row in reader:
 
-            z_offset = float(row["Z-Intercept"]) if row["Z-Intercept"] != "N/A" else (ztable+ row["GirdleZ"])
+            z_offset = float(row["ZIntercept"]) if row["Z-Intercept"] != "N/A" else (ZtoTableOffset + row["GirdleZ"])
             index = float(row["Index"]) * indexwheelreal
             pitch = float(row["Pitch"])
             girdle_z = float(row["GirdleZ"]) if row["GirdleZ"] != "N/A" else 0.0
@@ -88,18 +88,18 @@ try:
             client.robot_move(robot_handle, 2, Pose, move_speed)
 
             facet = [facX, facY, facZ-45, facP, facI, facY]
-            cut_position = GrindCut(facet, roll, pitch)
+            cut_position = GrindCut(facet)
             Pose = [cut_position, "CP", "@E"]
             client.robot_move(robot_handle, 2, Pose, move_speed)
 
             facet = [facX, facY+30, facZ-50, facP, facI, facY]
-            cut_position = GrindCut(facet, roll, pitch)
+            cut_position = GrindCut(facet)
             Pose = [cut_position, "CP", "@E"]
             client.robot_move(robot_handle, 2, Pose, move_speed)
 
 
             facet = [facX, facY+30, facZ, facP, facI, facY]
-            cut_position = GrindCut(facet, roll, pitch)
+            cut_position = GrindCut(facet)
             Pose = [cut_position, "CP", "@E"]
             client.robot_move(robot_handle, 2, Pose, move_speed)
 

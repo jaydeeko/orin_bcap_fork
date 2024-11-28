@@ -103,7 +103,7 @@ def export_planes_to_csv(planes, output_file="planes.csv", indexwheel=3.75):
         writer = csv.writer(file)
 
         # Define column headers with alignment
-        headers = ["Z-Intercept", "Index", "Pitch", "GirdleZ"]
+        headers = ["ZIntercept", "Index", "Pitch", "GirdleZ"]
         formatted_headers = [header.center(12) for header in headers]
         writer.writerow(formatted_headers)
 
