@@ -22,7 +22,7 @@ def pose_trans(p_from, p_from_to):
     return resulting_pose
 
 def GrindCut(target_pose, a=1, v=1):
-    x, y, z, pitch, index, yaw = target_pose  # Unpack the target pose array
+    x, y, z, index, pitch = target_pose  # Unpack the target pose array
 
     #print(pitch, index)
 
