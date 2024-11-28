@@ -1,19 +1,21 @@
-import time
-#import bcapclient
-
-
+import numpy as np
+from math import radians, degrees
+from scipy.spatial.transform import Rotation as R
 from bCAPClient.bcapclient import BCAPClient
+import math
+import time
+import numpy as np
+import GemCutHardcode
 
 
-from GemCutFunctions import *
-from GemCutSoftcode import *
-from GemCutHardcode import *
+import numpy as np
+from math import radians, degrees
+from scipy.spatial.transform import Rotation as R
 
 #TODO learn how to set speed in code
 
-#Cutfilter = Pavilion, Crown, Girdle
-Cutfilter = "Pavilion"
-#TODO -- filter moves based on step
+
+
 
 
 # Define connection parameters
@@ -40,7 +42,7 @@ try:
 
 
      # Base position with fixed X, Y values and starting angles for Roll, Pitch, and Yaw at -90 degrees
-    base_position = {"X": 0, "Y": -360, "Z": 200}
+    base_position = {"X": 0, "Y": -360, "Z": 200, "Indexdeg": 0, "Pitch": 90}
 
     # Possible increments from the base position for Roll, Pitch, and Yaw (-45, -20, 0, 20, 45)
     indexincrements = [-200, 120, 175, 210, 310]
@@ -59,68 +61,30 @@ try:
     client.robot_move(robot_handle, 1, Pose, move_speed)
     print("Start loop")
 
-    # Open and read the CSV file
-    with open(planes.csv, mode='r') as file:
-        reader = csv.DictReader(file)
-
-        for row in reader:
-
-            z_offset = float(row["Z-Intercept"]) if row["Z-Intercept"] != "N/A" else (ztable+ row["GirdleZ"])
-            index = float(row["Index"]) * indexwheelreal
-            pitch = float(row["Pitch"])
-            girdle_z = float(row["GirdleZ"]) if row["GirdleZ"] != "N/A" else 0.0
-            yaw = 0 # Define the yaw (static in this example)
 
 
-            # Construct the facet based on the row and base position
-            facX = base_position["X"]
-            facY = base_position["Y"]
-            facZ = z_offset
-            facP = pitch
-            facI = index #in degrees
-            facY = yaw
-
-
-            # Initial position
-            facet = [facX, facY, facZ, facP,  facI, facY]
-            cut_position = GrindCut(facet)
-            Pose = [cut_position, "CP", "@E"]
-            client.robot_move(robot_handle, 2, Pose, move_speed)
-
-            facet = [facX, facY, facZ-45, facP, facI, facY]
+    for pitch in pitchincrements:
+        for roll in indexincrements:
+            yaw = 0
+            facet = [base_position["X"], base_position["Y"], base_position["Z"], base_position["Pitch"], base_position["Indexdeg"], yaw]
             cut_position = GrindCut(facet, roll, pitch)
             Pose = [cut_position, "CP", "@E"]
             client.robot_move(robot_handle, 2, Pose, move_speed)
 
-            facet = [facX, facY+30, facZ-50, facP, facI, facY]
+            facet = [base_position["X"], base_position["Y"], base_position["Z"]-45, base_position["Pitch"], base_position["Indexdeg"], yaw]
             cut_position = GrindCut(facet, roll, pitch)
             Pose = [cut_position, "CP", "@E"]
             client.robot_move(robot_handle, 2, Pose, move_speed)
 
-
-            facet = [facX, facY+30, facZ, facP, facI, facY]
+            facet = [base_position["X"], base_position["Y"]+30, base_position["Z"]-50, base_position["Pitch"], base_position["Indexdeg"], yaw]
             cut_position = GrindCut(facet, roll, pitch)
             Pose = [cut_position, "CP", "@E"]
             client.robot_move(robot_handle, 2, Pose, move_speed)
 
-                # Define the pose and move the robot
-
-
-
-
-
-
-
-
-
-
-# Dependent on cut:
-# Rough pass -- approach from very high. 0.5mm
-# mid pass -- 0.5mm approach,
-#
-# For each facet
-
-
+            facet = [base_position["X"], base_position["Y"]+30, base_position["Z"], base_position["Pitch"], base_position["Indexdeg"], yaw]
+            cut_position = GrindCut(facet, roll, pitch)
+            Pose = [cut_position, "CP", "@E"]
+            client.robot_move(robot_handle, 2, Pose, move_speed)
 
 
 
@@ -134,4 +98,3 @@ try:
 finally:
     # Stop the BCAP service
     client.service_stop()
-
