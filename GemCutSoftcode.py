@@ -1,6 +1,4 @@
-#Cutfilter = Pavilion, Crown, Girdle
-Cutfilter = "Pavilion"
-#TODO -- filter moves based on step
+
 
 #Current cut step
 #Rough (360), Medium (1200), Polish (3000), Final polish  (50k)
@@ -34,7 +32,8 @@ GemMiddle = 12
 
 #Cut speed, normalized to 100
 Cutspeed = 100
-
+#TODO Multiply move speeds by Cutspeed/100
+#TODO determine how to set speed in code
 
 
 

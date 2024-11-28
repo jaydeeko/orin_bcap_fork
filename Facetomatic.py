@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import math
 import csv
 
-indexwheelreal= 360/96
+
 
 
 def extract_plane_equations(stl_mesh):
