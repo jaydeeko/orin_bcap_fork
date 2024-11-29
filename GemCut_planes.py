@@ -1,10 +1,7 @@
 import time
-
 import csv
 
 from Python.bCAPClient.bcapclient import BCAPClient
-
-
 from GemCutFunctions import *
 from GemCutSoftcode import *
 from GemCutHardcode import *
@@ -12,7 +9,7 @@ from GemCutHardcode import *
 #TODO learn how to set speed in code
 
 #Cutfilter = Pavilion, Crown, Girdle
-Cutfilter = "Pavilion"
+Cutfilter = "Pav"
 #TODO -- filter moves based on step
 
 
@@ -25,24 +22,27 @@ TIMEOUT = 2000  # Timeout in milliseconds
 robot_name = "vp6242a"  # Name of the robot in the controller
 move_speed = "Speed=100"  # Movement speed
 
-
+offline_mode = True
 
 try:
-    # The boring stuff
-    client = BCAPClient(HOST, PORT, TIMEOUT)
-    client.service_start()
-    controller_handle = client.controller_connect("", "CaoProv.DENSO.VRC", "localhost", "")
-    robot_handle = client.controller_getrobot(controller_handle, robot_name, "")
-    client.robot_execute(robot_handle, "Motor", [1, 0])
-    client.robot_execute(robot_handle, "TakeArm")
-    time.sleep(1)
-    client.robot_change(robot_handle, "Tool1")
+    if offline_mode == False:
+        # The boring stuff
+        client = BCAPClient(HOST, PORT, TIMEOUT)
+        client.service_start()
+        controller_handle = client.controller_connect("", "CaoProv.DENSO.VRC", "localhost", "")
+        robot_handle = client.controller_getrobot(controller_handle, robot_name, "")
+        client.robot_execute(robot_handle, "Motor", [1, 0])
+        client.robot_execute(robot_handle, "TakeArm")
+        time.sleep(1)
+        client.robot_change(robot_handle, "Tool1")
 
-    tool_pose = [0.0, 0.0, Dopheight, 0.0, 0.0, 0.0]
-    client.robot_change(robot_handle, "Tool1", new_tool_pose)
-
-     # Base position with fixed X, Y values and starting angles for Roll, Pitch, and Yaw at -90 degrees
-    #base_position = {"X": 0, "Y": -360, "Z": 200}
+        tool_pose = [0.0, 0.0, Dopheight, 0.0, 0.0, 0.0]
+        client.robot_change(robot_handle, "Tool1", tool_pose)
+    else:
+        client = 0
+        robot_handle = 0
+         # Base position with fixed X, Y values and starting angles for Roll, Pitch, and Yaw at -90 degrees
+        #base_position = {"X": 0, "Y": -360, "Z": 200}
 
     # Possible increments from the base position for Roll, Pitch, and Yaw (-45, -20, 0, 20, 45)
     indexincrements = [-200, 120, 175, 210, 310]
@@ -57,8 +57,7 @@ try:
     #client.robot_move(robot_handle, 1, "J(-90, 40, 57, 0, 0, -20)")
     #client.robot_execute(robot_handle, "MoveJ", "[-90, 40, 57, 0, 0, -20]")
 
-    Pose = [joint_positions, "J"]
-    client.robot_move(robot_handle, 1, Pose, move_speed)
+
 
 
     with open("planes.csv", mode="r") as file:
@@ -69,31 +68,40 @@ try:
         reader.fieldnames = [header.strip() for header in reader.fieldnames]
 
         # Debug column headers
-        print("Trimmed Headers in CSV:", reader.fieldnames)
+        #print(reader.fieldnames)
 
 
 
         for row in reader:
             row = {key.strip(): value.strip() for key, value in row.items()}
 
-            if float(row["Pitch"]) > 0:
 
+
+            pitch = float(row["Pitch"])
+
+            if row["Step"] == "Pav":
+
+                Pose = [joint_positions, "J"]
+                #execute_grind_cut(client, robot_handle, Pose, move_speed, offline_mode)
+                #client.robot_move(robot_handle, 1, Pose, move_speed)
 
 
                 z_offset = float(row["ZIntercept"]) if row["ZIntercept"] != "N/A" else row["GirdleZ"]
-                z_offset =+ ZtoTableOffset #TODO add discheight (modulated by cut step) here
+                z_offset = abs(z_offset)
+                z_offset += ZtoTableOffset #TODO add discheight (modulated by cut step) here
 
 #TODO           tool_pose = [0.0, 0.0, Dopheight, 0.0, 0.0, 0.0]
 #TODO           client.robot_change(robot_handle, "Tool1", tool_pose)
 
                 index = float(row["Index"]) * indexwheelreal
-                index =+ Indexcheat
+                index += Indexcheat
 
                 pitch = float(row["Pitch"])
-                #TODO pitch =+ pitchcal
+                pitch = abs(pitch)
+                #TODO pitch += pitchcal
 
                 girdle_z = float(row["GirdleZ"]) if row["GirdleZ"] != "N/A" else 0.0
-                #TODO girdle_z =+ girdlecal
+                #TODO girdle_z += girdlecal
                 yaw = 0 # Define the yaw (static in this example)
 
                 # Construct the facet based on the row and base position
@@ -102,44 +110,36 @@ try:
                 facZ = z_offset
                 facP = pitch
 
-                #TODO invert pitch (*-1) for pavilion vs crown
 
                 facI = index #in degrees
 
                 #TODO Set TCP based on Z intercept
 
-                # Initial position
+
+                print(facX, facY, facZ, facI,  facP)
+
                 facet = [facX, facY, facZ, facI,  facP]
-                cut_position = GrindCut(facet)
-                Pose = [cut_position, "CP", "@E"]
-                print(Pose)
-                client.robot_move(robot_handle, 2, Pose, move_speed)
+                execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode)
+
 
                 facet = [facX, facY, facZ-45, facI,  facP]
-                cut_position = GrindCut(facet)
-                Pose = [cut_position, "CP", "@E"]
-                client.robot_move(robot_handle, 2, Pose, move_speed)
+                execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode)
+
+
 
                 facet = [facX, facY+30, facZ-50, facI,  facP]
-                cut_position = GrindCut(facet)
-                Pose = [cut_position, "CP", "@E"]
-                client.robot_move(robot_handle, 2, Pose, move_speed)
+                execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode)
+
 
                 #TODO cycle between x0y0 and x1y1 lowering Z from Zstart down to Zfinal
 
                 facet = [facX, facY+30, facZ, facI,  facP]
-                cut_position = GrindCut(facet)
-                Pose = [cut_position, "CP", "@E"]
-                client.robot_move(robot_handle, 2, Pose, move_speed)
+                execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode)
+
 
                 #TODO cycle between x0y0 and x1y1 at final Z, number of counts equal to flatsweep
 
                     # Define the pose and move the robot
-
-
-
-
-
 
 
 
@@ -155,14 +155,14 @@ try:
 
 
 
-
-
 #Close
-    client.robot_execute(robot_handle, "GiveArm")
-    client.robot_release(robot_handle)
-    client.controller_disconnect(controller_handle)
+    if offline_mode == False:
+        client.robot_execute(robot_handle, "GiveArm")
+        client.robot_release(robot_handle)
+        client.controller_disconnect(controller_handle)
 
 finally:
     # Stop the BCAP service
-    client.service_stop()
+    if offline_mode == False:
+        client.service_stop()
 

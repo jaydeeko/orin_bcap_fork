@@ -5,7 +5,7 @@ import math
 import csv
 
 
-
+stl_file = 'Simple Example.stl'
 
 def extract_plane_equations(stl_mesh):
     """
@@ -84,14 +84,14 @@ def calculate_rotation_and_pitch(A, B, C, D, indexwheel=3.75):
 
 def export_planes_to_csv(planes, output_file="planes.csv", indexwheel=3.75):
     """
-    Export plane equations, Z-intercepts, rotation around Z-axis, pitch, and Girdle Z to a CSV file.
+    Export plane equations, Z-intercepts, rotation around Z-axis, pitch, Girdle Z, and Step to a CSV file.
     The output is aligned, formatted for readability, and removes duplicate rows.
     :param planes: List of planes, each represented as [A, B, C, D]
     :param output_file: Name of the output CSV file
     :param indexwheel: Conversion factor for index calculation
     """
 
-    def format_value(value, width=10):
+    def format_value(value, width=12):
         """Format values for better readability and alignment."""
         if value is None:
             return "N/A".rjust(width)
@@ -99,11 +99,25 @@ def export_planes_to_csv(planes, output_file="planes.csv", indexwheel=3.75):
             return f"{value:.3f}".rjust(width)
         return str(value).rjust(width)
 
+    def determine_step(pitch, girdlez):
+        """Determine the Step value based on pitch and GirdleZ."""
+        if girdlez != "N/A":
+            return "Gird"
+        elif pitch == 90.000:
+            return "CrwnT"
+        elif pitch > 0:
+            return "Crown"
+        elif pitch == -90.000:
+            return "PavT"
+        elif pitch < 0:
+            return "Pav"
+        return "Unknown"
+
     with open(output_file, mode='w', newline='') as file:
         writer = csv.writer(file)
 
         # Define column headers with alignment
-        headers = ["ZIntercept", "Index", "Pitch", "GirdleZ"]
+        headers = ["Step", "ZIntercept", "Index", "Pitch", "GirdleZ"]
         formatted_headers = [header.center(12) for header in headers]
         writer.writerow(formatted_headers)
 
@@ -119,12 +133,15 @@ def export_planes_to_csv(planes, output_file="planes.csv", indexwheel=3.75):
             index = round(index, 3)
             pitch = round(pitch, 3)
 
-            if girdlez!="N/A":
+            if girdlez != "N/A":
                 girdlez = round(girdlez, 3)
-                print("Rounding")
+
+            # Determine the step based on pitch and GirdleZ
+            step = determine_step(pitch, girdlez)
 
             # Create a tuple of values to ensure uniqueness
             row = (
+                format_value(step),
                 format_value(z_intercept),
                 format_value(index),
                 format_value(pitch),
@@ -154,5 +171,5 @@ def main(stl_file):
 
 
 # Replace 'your_file.stl' with your STL file path
-stl_file = 'Simple Example.stl'
+
 main(stl_file)

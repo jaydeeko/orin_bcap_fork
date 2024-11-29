@@ -51,5 +51,29 @@ def GrindCut(target_pose, a=1, v=1):
         round(float(final_orientation[2]), 4),
         -3
     ]
-
+    #print(real_pose)
     return real_pose
+
+
+
+def execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode=True):
+
+    """
+    Execute a grind cut operation, with an optional offline mode to skip robot commands.
+    :param client: The BCAPGrindCut Client instance
+    :param robot_handle: The robot handle object
+    :param facet: The facet data [facX, facY, facZ, facI, facP]
+    :param move_speed: Movement speed setting
+    :param offline_mode: If True, commands are not sent to the robot (testing mode)
+    """
+
+    cut_position = GrindCut(facet)
+    Pose = [cut_position, "CP", "@E"]
+
+    # TODO move to joint base at the END of every move (no dwell)
+
+    if offline_mode:
+        print("moved")
+        #print(f"[Offline Mode] Skipped: robot_move with Pose={Pose} and move_speed={move_speed}")
+    else:
+        client.robot_move(robot_handle, 2, Pose, move_speed)
