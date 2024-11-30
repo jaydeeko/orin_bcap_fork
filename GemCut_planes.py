@@ -8,7 +8,7 @@ from GemCutHardcode import *
 
 #TODO learn how to set speed in code
 
-#Cutfilter = Pavilion, Crown, Girdle
+#Cutfilter = Pav, Gird, Crown, CrwnT, PavT
 Cutfilter = "Pav"
 #TODO -- filter moves based on step
 
@@ -45,8 +45,7 @@ try:
         #base_position = {"X": 0, "Y": -360, "Z": 200}
 
     # Possible increments from the base position for Roll, Pitch, and Yaw (-45, -20, 0, 20, 45)
-    indexincrements = [-200, 120, 175, 210, 310]
-    pitchincrements = [0, 10, 20, 45]
+
     #initial_position = [0, -360.5, 300, 90, 0, 0, -3]
 
     #Pose = [initial_position, "P", "@E"]
@@ -109,8 +108,6 @@ try:
                 facY = X1Y1[1]
                 facZ = z_offset
                 facP = pitch
-
-
                 facI = index #in degrees
 
                 #TODO Set TCP based on Z intercept
@@ -118,23 +115,23 @@ try:
 
                 print(facX, facY, facZ, facI,  facP)
 
-                facet = [facX, facY, facZ, facI,  facP]
-                execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode)
+                pose = [facX, facY, facZ, facI,  facP]
+                execute_grind_cut(client, robot_handle, pose, move_speed, offline_mode)
 
 
-                facet = [facX, facY, facZ-45, facI,  facP]
-                execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode)
+                pose = [facX, facY, facZ-45, facI,  facP]
+                execute_grind_cut(client, robot_handle, pose, move_speed, offline_mode)
 
 
 
-                facet = [facX, facY+30, facZ-50, facI,  facP]
-                execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode)
+                pose = [facX, facY+30, facZ-50, facI,  facP]
+                execute_grind_cut(client, robot_handle, pose, move_speed, offline_mode)
 
 
                 #TODO cycle between x0y0 and x1y1 lowering Z from Zstart down to Zfinal
 
-                facet = [facX, facY+30, facZ, facI,  facP]
-                execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode)
+                pose = [facX, facY+30, facZ, facI,  facP]
+                execute_grind_cut(client, robot_handle, pose, move_speed, offline_mode)
 
 
                 #TODO cycle between x0y0 and x1y1 at final Z, number of counts equal to flatsweep
@@ -142,6 +139,13 @@ try:
                     # Define the pose and move the robot
 
 
+
+
+
+
+#TODO Add girdle functionality
+    #Needs to use GirdleZ instead of Zint, NO tool offset
+    #Needs girdlex1y1 and girdlex2y2
 
 
 

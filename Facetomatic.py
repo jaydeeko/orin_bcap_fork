@@ -79,6 +79,7 @@ def calculate_rotation_and_pitch(A, B, C, D, indexwheel=3.75):
         GirdleZ =abs(D) / math.sqrt(A ** 2 + B ** 2)
     else:
         GirdleZ = "N/A"
+
     return round(index), pitch, GirdleZ
 
 
@@ -131,7 +132,14 @@ def export_planes_to_csv(planes, output_file="planes.csv", indexwheel=3.75):
             # Calculate index, pitch, and Girdle Z
             index, pitch, girdlez = calculate_rotation_and_pitch(A, B, C, D, indexwheel)
             index = round(index, 3)
+
+            print("pre", pitch)
             pitch = round(pitch, 3)
+
+
+            if str(pitch) == "-0.0": pitch = 0.0
+            print("post", pitch)
+
 
             if girdlez != "N/A":
                 girdlez = round(girdlez, 3)

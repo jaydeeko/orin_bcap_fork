@@ -51,7 +51,7 @@ def GrindCut(target_pose, a=1, v=1):
         round(float(final_orientation[2]), 4),
         -3
     ]
-    #print(real_pose)
+
     return real_pose
 
 

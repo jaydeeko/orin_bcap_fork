@@ -1,4 +1,4 @@
-
+indexwheelreal= 360/96
 
 #Height from table to aluminum plate
 ZtoTableOffset = 250
@@ -8,15 +8,15 @@ ZtoTableOffset = 250
 
 #TODO use discheight
 #TODO use Zcutstep
-#TODO use speedbadse
+#TODO use speedbase
 #TODO use flatsweep
 
-
-#                DiscHeight          Zcutstep            SpeedBase      FlatSweep
-Rough       =    [2,                   .1,                  300,           2]
-Medium      =    [2,                   .05,                 200,           5]
-Polish      =    [2,                   .01,                 150,           10]
-FinalPolish =    [12,                  .001,                 100,          50]
+#Zcutheight = [12, 1, 0.2, 0.05]
+#                DiscHeight          Zcutstep       ZcutHeight    SpeedBase      FlatSweep
+Rough       =    [2,                   .1,           12,            300,           2]
+Medium      =    [2,                   .05,          1,             200,           5]
+Polish      =    [2,                   .01,          0.2,           150,           10]
+FinalPolish =    [12,                  .001,         0.05,          100,           50]
 
 #X1Y1, X2Y2 that cuts oscillate between
 X1Y1 = [0, -450]
@@ -27,7 +27,7 @@ X2Y2 = [0, -350]
 #Total cut height, mm -> changed to softcode
 #Zcutheight = [12, 1, 0.2, 0.05]
 
-indexwheelreal= 360/96
+
 
 
 
