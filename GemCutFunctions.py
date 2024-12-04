@@ -1,6 +1,5 @@
 from scipy.spatial.transform import Rotation as R
 from math import radians
-# TODO this doc should hold all of the if
 from DashBoard import *
 from GemCutHardcode import *
 
@@ -34,7 +33,7 @@ def GrindCut(facetdata, a=1, v=1):
     world_rotation = R.from_euler('x', radians(pitch), degrees=False)  # World's Y-axis rotation
 
     # Initial rotation based on target pose
-    initial_rotation = R.from_euler('xyz', [radians(90), 0, 0], degrees=False)
+    initial_rotation = R.from_euler('xyz', [radians(90), 0, radians(Yaw)], degrees=False)
 
     # Combine rotations: First world Y-axis, then tool Z-axis relative to the tool frame
     combined_rotation = world_rotation * initial_rotation * tool_rotation
@@ -51,6 +50,7 @@ def GrindCut(facetdata, a=1, v=1):
         round(float(final_orientation[1]), 4),
         round(float(final_orientation[2]), 4),
         -3
+
     ]
 
     return real_pose
@@ -67,7 +67,7 @@ def execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode=True
     """
 
     cut_position = GrindCut(facet)
-    Pose = [cut_position, "CP", "@E"]
+    Pose = [cut_position, "P", "@0"]
 
     # TODO move to joint base at the END of every move (no dwell)
 
@@ -77,7 +77,7 @@ def execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode=True
         #print(f"[Offline Mode] Skipped: robot_move with Pose={Pose} and move_speed={move_speed}")
     else:
         print(robot_handle, Pose, move_speed, client)
-        client.robot_move(robot_handle, 2, Pose, move_speed)
+        client.robot_move(robot_handle, 1, Pose, "")
 
 
 def FacetLoop(row, step, client, robot_handle):
@@ -97,9 +97,9 @@ def FacetLoop(row, step, client, robot_handle):
     # Prepares the robot for operation if not in offline mode
     if not offline_mode:
         Pose = [joint_positions, "J"]
-        #TODO delete this: execute_grind_cut(client, robot_handle, Pose, move_speed, offline_mode)
         client.robot_move(robot_handle, 1, Pose, move_speed)
-        print("Went to home")
+        #TODO delete this: execute_grind_cut(client, robot_handle, Pose, move_speed, offline_mode)
+        print("facetloopstart")
 
     # Extract and calculate parameters
     # z_offset = float(row["ZIntercept"]) if row["ZIntercept"] != "N/A" else float(row["GirdleZ"])
@@ -117,7 +117,7 @@ def FacetLoop(row, step, client, robot_handle):
 
     # girdle_z = abs(float(row["GirdleZ"])) if row["GirdleZ"] != "N/A" else 0.0
 
-    yaw = 0
+    #yaw = 1
 
     facP = pitch
     facI = index  # Index in degrees
@@ -163,7 +163,6 @@ def run_cycle_between_positions(client, robot_handle, X1Y1, X2Y2, Zstart, Zfinal
 
         # Lower Z by Zdelta / 2
         current_Z = round(max(current_Z - (Zdelta / 2), Zfinal), 4)
-        print(f"Lowered Z to {current_Z}")
 
         # Move to the second position
         facX, facY = X2Y2
@@ -172,7 +171,7 @@ def run_cycle_between_positions(client, robot_handle, X1Y1, X2Y2, Zstart, Zfinal
 
         # Lower Z by another Zdelta / 2
         current_Z = round( max(current_Z - (Zdelta / 2), Zfinal), 4)
-        print(f"Lowered Z to {current_Z}")
+
 
     print("Zfinal reached. Cycle complete.")
 

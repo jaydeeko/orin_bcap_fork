@@ -19,7 +19,7 @@ Dopheight = 35 #Length offset for dop Will have to learn how to measure this
 PitchTweak = 0.0 #Pitch Cheater -- shouldnt change.. Set to 0 at star
 
 
-
+Yaw = 15 #Positive numbers trail the gem on a clockwise rotation
 
 
 #+====================================

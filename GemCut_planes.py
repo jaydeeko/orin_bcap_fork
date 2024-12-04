@@ -37,13 +37,14 @@ try:
         current_tool_def = client.robot_execute(robot_handle, "GetToolDef", 1)
         print(f"Current dopheight is {current_tool_def[2]}")
 
-        temptest = [[0.0, -400.0, 264.0, 92.5, 0.0, 0.0, -3], 'CP', '@E']
+        temptest = [[0.0, -400.0, 264.0, 92.5, 0.0, 0.0, -3], 'P', '@E']
         # client.robot_move(robot_handle, 2, temptest, move_speed)
         # temptest2 = [[0.0, -455.0, 264.0, 92.5, 0.0, 0.0, -3], 'CP', '@E']
         # client.robot_move(robot_handle, 2, temptest2, move_speed)
-        temptest3 = [[0.0, -400.0, 264.0, 92.5, 0.0, 0.0, -3], 'CP', '@E']
-        client.robot_move(robot_handle, 2, temptest3, move_speed)
-        print(robot_handle, temptest, move_speed, client)
+        temptest3 = [[0.0, -400.0, 264.0, 92.5, 0.0, 0.0, -3], 'P', '@E']
+        Pose = [joint_positions, "J"]
+        client.robot_move(robot_handle, 1, Pose, move_speed)
+
 
 
 
