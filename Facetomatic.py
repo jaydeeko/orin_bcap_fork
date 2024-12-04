@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 import math
 import csv
 
+from DashBoard import GemName
 
-stl_file = 'Simple Example.stl'
+stl_file = GemName
 
 def extract_plane_equations(stl_mesh):
     """

@@ -33,7 +33,7 @@ joint_positions = [-90, 40, 57, 0, 0, -20] #OG
 # }
 
 LapProcesses = { # DiscHeight    ZDOC   ZDepthTot    SpeedBase          FlatSweep
-        "Rough":  [2,            10,          40,         300,              0],
+        "Rough":  [2,            10,          10,         300,              0],
         "Medium": [2,            2,          1,         200,              5],
         "Polish": [2,            2,        0.2,         150,             10],
         "FinPol": [12,           2,       0.05,        100,             50]

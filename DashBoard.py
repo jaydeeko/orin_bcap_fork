@@ -1,5 +1,5 @@
-
-GemStep = "Pav" #= Pav, Gird, Crown, CrwnT, PavT
+GemName = "pc01346.stl"
+GemStep = "Crown" #= Pav, Gird, Crown, CrwnT, PavT
 
 
 ZTweak = 0.0 #Adjusts the height of the disc from the table
