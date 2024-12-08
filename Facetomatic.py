@@ -3,10 +3,9 @@ from stl import mesh
 import matplotlib.pyplot as plt
 import math
 import csv
-
 from DashBoard import GemName
 
-stl_file = GemName
+stl_file = GemName #sources from Dashboard
 
 def extract_plane_equations(stl_mesh):
     """
@@ -30,8 +29,6 @@ def extract_plane_equations(stl_mesh):
 
         planes.append((*normal, D, z_intercept))
     return planes
-
-
 def visualize_endpoints(stl_mesh):
     """
     Visualize endpoints (vertices) in 3D.
@@ -46,11 +43,6 @@ def visualize_endpoints(stl_mesh):
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
     plt.show()
-
-
-
-
-
 def calculate_rotation_and_pitch(A, B, C, D, indexwheel=3.75):
     """
         Calculate the shortest distance from the plane to the Z-axis (Girdle Z).
@@ -82,8 +74,6 @@ def calculate_rotation_and_pitch(A, B, C, D, indexwheel=3.75):
         GirdleZ = "N/A"
 
     return round(index), pitch, GirdleZ
-
-
 def export_planes_to_csv(planes, output_file="planes.csv", indexwheel=3.75):
     """
     Export plane equations, Z-intercepts, rotation around Z-axis, pitch, Girdle Z, and Step to a CSV file.
@@ -164,7 +154,6 @@ def export_planes_to_csv(planes, output_file="planes.csv", indexwheel=3.75):
             writer.writerow(row)
     print(f"Planes exported to {output_file}, duplicates removed.")
 
-
 def main(stl_file):
     # Load the STL file
     stl_mesh = mesh.Mesh.from_file(stl_file)
@@ -177,8 +166,5 @@ def main(stl_file):
 
     # Export planes to a CSV file
     export_planes_to_csv(planes)
-
-
-# Replace 'your_file.stl' with your STL file path
 
 main(stl_file)
