@@ -25,8 +25,9 @@ try:
         current_tool_def = client.robot_execute(robot_handle, "GetToolDef", 1)
         #print(f"Current tooldef is {current_tool_def}")
 
-        tool_pose = [0, 0, Dopheight, 0, 0, 0]
+        tool_pose = [[0, 0, Dopheight, 0, 0, 0], "P"]
         client.robot_execute(robot_handle, "SetToolDef", [1, tool_pose])
+
 
         current_tool_def = client.robot_execute(robot_handle, "GetToolDef", 1)
         print(f"Current dopheight is {current_tool_def[2]}")

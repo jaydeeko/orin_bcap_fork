@@ -58,7 +58,8 @@ def execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode=True
         client.robot_move(robot_handle, 1, Pose, "")
 
 def FacetLoop(row, step, client, robot_handle):
-    tool_pose = [0, 0, Dopheight + (row["ZIntercept"]*Gemscale), 0, 0, 0]
+
+    tool_pose = [[0, 0, Dopheight + (float(row["ZIntercept"])  *Gemscale), 0, 0, 0], "P"]
     client.robot_execute(robot_handle, "SetToolDef", [1, tool_pose])
 
     current_tool_def = client.robot_execute(robot_handle, "GetToolDef", 1)
