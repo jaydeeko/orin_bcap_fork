@@ -96,7 +96,7 @@ def export_planes_to_csv(planes, output_file="planes.csv", indexwheel=3.75):
         if girdlez != "N/A":
             return "Gird"
         elif pitch == 90.000:
-            return "CrwnT"
+            return "CrownT"
         elif pitch > 0:
             return "Crown"
         elif pitch == -90.000:

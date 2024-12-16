@@ -51,11 +51,11 @@ try:
 
         for row in reader:
             row = {key.strip(): value.strip() for key, value in row.items()}
-
+            print(GemStep)
             if (GemStep == "Pav")    and (row["Step"] == "Pav"):      FacetLoop(row, LapProcess, client, robot_handle)    # Pav
             if (GemStep == "Crown")  and (row["Step"] == "Crown"):    FacetLoop(row, LapProcess, client, robot_handle)    # Crown
-            if (GemStep == "Girdle") and (row["Step"] == "Girdle"):   GirdleLoop(row, LapProcess, client, robot_handle)   # Girdle
-            if (GemStep == "CwrnT")  and (row["Step"] == "CrwnT"):    FacetLoop(row, LapProcess, client, robot_handle)    # Crown Table
+            if (GemStep == "Gird") and (row["Step"] == "Gird"):   GirdleLoop(row, LapProcess, client, robot_handle)   # Girdle
+            if (GemStep == "CrownT")  and (row["Step"] == "CrownT"):    FacetLoop(row, LapProcess, client, robot_handle)    # Crown Table
             if (GemStep == "PavT")   and (row["Step"] == "PavT"):     FacetLoop(row, LapProcess, client, robot_handle)    # Pav Table
             #TODO Think about adding a separate table loop function
 

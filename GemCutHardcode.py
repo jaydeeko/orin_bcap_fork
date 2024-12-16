@@ -2,18 +2,19 @@ offline_mode = False #False = real run. True = test mode
 indexwheelreal= 360/96 #Technically, degrees per index. Facetomatic uses this for planes.csv, doesn't impact CAM
 
 #X1Y1, X2Y2 that cuts oscillate between
-X1Y1 = [0, -450]
-X2Y2 = [0, -350]
+X1Y1 = [0, -375]
+X2Y2 = [0, -300]
 
 #Oscillation points for Girdle
-GirdX1Y1 = [0, -300]
-GirdX2Y2 = [0, -325]
+GirdX1Y1 = [0, -340]
+GirdX2Y2 = [0, -330]
 
-ZtoTableOffset = 250  #Height from table to aluminum plate
+ZtoTableOffset = 150  #Height from table to aluminum plate
 
 PitchCal = 0
 GirdleCal = 0
 
+GirdleBoundary = 25.0 # Below this value, Girdle will
 
 joint_positions = [-90, 40, 57, 0, 0, -20] #Safe position
 
