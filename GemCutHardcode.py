@@ -16,8 +16,8 @@ GirdleCal = 0
 
 GirdleBoundary = 25.0 # Below this value, Girdle will
 
-joint_positions = [-90, 40, 57, 0, 0, -20] #Safe position
-
+#joint_positions = [-90, 40, 57, 0, 0, -20] #Safe position
+joint_positions = [-90, 12, 155, 0, -70, -20] #Safe position
 #TODO use speedbase
 
 # Rough (360), Medium (1200), Polish (3000), Final polish  (50k)

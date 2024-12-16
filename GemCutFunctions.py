@@ -47,7 +47,7 @@ def execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode=True
     """
 
     cut_position = GrindCut(facet)
-    Pose = [cut_position, "P", "@0"]
+    Pose = [cut_position, "L", "@0"]
 
     if offline_mode:
         pass
@@ -80,10 +80,10 @@ def FacetLoop(row, step, client, robot_handle):
         client.robot_move(robot_handle, 1, Pose, move_speed)
         print("facetloopstart")
 
-    z_disc = DiscHeight + ZtoTableOffset + ZTweak  # Adjust for Z intercept and table offset
-    Ztable = z_disc + ZTweak
+    z_disc = DiscHeight + ZtoTableOffset + ZTweak  # Adjust for Z intercept and table offset ##TODO Align ZTweak to girdle, used differently
+    ZStop = z_disc + ZTweak
 
-    Zstart = Ztable + ZDepthTot
+    Zstart = ZStop + ZDepthTot
 
     index = float(row["Index"]) * indexwheelreal + Indexcheat
     pitch = abs(float(row["Pitch"])) + PitchTweak  # Ensure pitch is positive
@@ -102,18 +102,18 @@ def FacetLoop(row, step, client, robot_handle):
 
     if abs(float(row["Pitch"])) >= GirdleBoundary:
         print("NotGirdle")
-        run_cycle_between_positions(client, robot_handle, X1Y1, X2Y2, Zstart, Ztable, ZDOC, facI, facP, move_speed, offline_mode)
-        final_sweep(client, robot_handle, X1Y1, X2Y2, Ztable, FlatSweeps, facI, facP, move_speed, offline_mode)
+        run_cycle_between_positions(client, robot_handle, X1Y1, X2Y2, Zstart, ZStop, ZDOC, facI, facP, move_speed, offline_mode)
+        final_sweep(client, robot_handle, X1Y1, X2Y2, ZStop, FlatSweeps, facI, facP, move_speed, offline_mode)
 
     if abs(float(row["Pitch"])) < GirdleBoundary:
         print("Girdleish")
-        run_cycle_between_positions(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, Ztable, ZDOC, facI, facP, move_speed, offline_mode)
-        final_sweep(client, robot_handle, GirdX1Y1, GirdX2Y2, Ztable, FlatSweeps, facI, facP, move_speed, offline_mode)
+        run_cycle_between_positions(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, ZStop, ZDOC, facI, facP, move_speed, offline_mode)
+        final_sweep(client, robot_handle, GirdX1Y1, GirdX2Y2, ZStop, FlatSweeps, facI, facP, move_speed, offline_mode)
 
     # print(X1Y1, X2Y2, Zstart, Ztable, ZDOC, facI, facP, move_speed, offline_mode)
 
     print("FacetLoop complete.")
-    #TODO elif pitch < girdleboundary
+
 def run_cycle_between_positions(client, robot_handle, X1Y1, X2Y2, Zstart, Zfinal, Zdelta, facI, facP, move_speed, offline_mode):
     """
     Cycle between two positions while lowering Z from Zstart to Zfinal, lowering Z by Zdelta/2 each step.
@@ -158,12 +158,14 @@ def final_sweep(client, robot_handle, X1Y1, X2Y2, Zfinal, flatsweep, facI, facP,
         pose = [facX, facY, Zfinal, facI, facP]
         execute_grind_cut(client, robot_handle, pose, move_speed, offline_mode)
 
-        #print(f"Completed sweep {sweep_count + 1} at Z={Zfinal}")
+    pose = [facX, facY, Zfinal + 10, facI, facP]
+    execute_grind_cut(client, robot_handle, pose, move_speed, offline_mode)
+    #print(f"Completed sweep {sweep_count + 1} at Z={Zfinal}")
 
 def GirdleLoop(row, step, client, robot_handle):
     # Determine the Z offset based on conditions
 
-    tool_pose = [[0, 0, Dopheight, 0, 0, 0], "P"] #Could use some correction factor later, maybe
+    tool_pose = [[0, 0, Dopheight, 0, 0, 0], "P"] #This P should never change
 
     client.robot_execute(robot_handle, "SetToolDef", [1, tool_pose])
 

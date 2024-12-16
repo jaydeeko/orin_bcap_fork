@@ -1,12 +1,11 @@
 GemName = "pc01346.stl"
 
-#TODO assess whether or not zintercept needs to be absolute valued before use in zoffsets (pretty sure it does)
-
 ZcutheightTweak = 12 #Gets added to total cut height, mm. Should really only change for rough
 Yaw = 0 #Positive numbers trail the gem on a clockwise rotation
 
 LapProcess = "Rough"  #Rough (360), Medium (1200), Polish (3000), Final polish  (50k)
-GemStep = "Pav" #= Pav, Gird, Crown, CrownT, PavT #TODO-- align labels
+GemSteps = ["Pav", "Gird"] #= Pav, Gird, Crown, CrownT, PavT #TODO-- align labels
+
 Gemscale = 10.0 #Gemscale -- multiplier for gem size. (Target length)/(Print sheet length)
 #TODO -- Gemscale implemented but maybe suspect
 
