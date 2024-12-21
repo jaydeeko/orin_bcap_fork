@@ -55,7 +55,7 @@ def execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode=True
         #print(f"[Offline Mode] Skipped: robot_move with Pose={Pose} and move_speed={move_speed}")
     else:
         print(robot_handle, Pose, move_speed, client)
-        client.robot_move(robot_handle, 1, Pose, "")
+        client.robot_move(robot_handle, 1, Pose, "") #1 works, #2 is linear motion, but jams on figure
 
 def FacetLoop(row, step, client, robot_handle):
 

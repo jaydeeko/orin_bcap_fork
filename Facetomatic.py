@@ -124,13 +124,9 @@ def export_planes_to_csv(planes, output_file="planes.csv", indexwheel=3.75):
             index, pitch, girdlez = calculate_rotation_and_pitch(A, B, C, D, indexwheel)
             index = round(index, 3)
 
-            print("pre", pitch)
             pitch = round(pitch, 3)
 
-
             if str(pitch) == "-0.0": pitch = 0.0
-            print("post", pitch)
-
 
             if girdlez != "N/A":
                 girdlez = round(girdlez, 3)

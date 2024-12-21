@@ -2,14 +2,14 @@ offline_mode = False #False = real run. True = test mode
 indexwheelreal= 360/96 #Technically, degrees per index. Facetomatic uses this for planes.csv, doesn't impact CAM
 
 #X1Y1, X2Y2 that cuts oscillate between
-X1Y1 = [0, -375]
-X2Y2 = [0, -300]
+X1Y1 = [8, -356]
+X2Y2 = [0, -353]
 
 #Oscillation points for Girdle
-GirdX1Y1 = [0, -340]
-GirdX2Y2 = [0, -330]
+GirdX1Y1 = [8, -356]
+GirdX2Y2 = [0, -353]
 
-ZtoTableOffset = 150  #Height from table to aluminum plate
+ZtoTableOffset = 200  #Height from table to aluminum plate
 
 PitchCal = 0
 GirdleCal = 0
@@ -22,19 +22,20 @@ joint_positions = [-90, 12, 155, 0, -70, -20] #Safe position
 
 # Rough (360), Medium (1200), Polish (3000), Final polish  (50k)
 
-# LapProcesses = { # DiscHeight    ZDOC   ZDepthTot    SpeedBase          FlatSweep
-#         "Rough":  [2,             .1,          12,         300,              5],
-#         "Medium": [2,            0.05,          1,         200,              5],
-#         "Polish": [2,            0.01,        0.2,         150,             10],
-#         "FinPol": [12,           0.001,       0.05,        100,             50]
-# }
-
+#TODO For lapprocesses, DOC can be converted to an absolute height using max material diameter so that initial rough pass is tight
 LapProcesses = { # DiscHeight    ZDOC   ZDepthTot    SpeedBase          FlatSweep
-        "Rough":  [2,            10,          10,         1,              2],
-        "Medium": [2,            2,          1,         .8,              5],
-        "Polish": [2,            2,        0.2,         .6,             10],
-        "FinPol": [12,           2,       0.05,        .4,             50]
+        "Rough":  [2,             .1,          8,         300,              5],
+        "Medium": [2,            0.05,          1,         200,              5],
+        "Polish": [2,            0.01,        0.2,         150,             10],
+        "FinPol": [12,           0.001,       0.05,        100,             50]
 }
+
+# LapProcesses = { # DiscHeight    ZDOC   ZDepthTot    SpeedBase          FlatSweep
+#         "Rough":  [2,            10,          10,         1,              2],
+#         "Medium": [2,            2,          1,         .8,              5],
+#         "Polish": [2,            2,        0.2,         .6,             10],
+#         "FinPol": [12,           2,       0.05,        .4,             50]
+# }
 
 
 #=========================================
