@@ -9,7 +9,12 @@ X2Y2 = [0, -353]
 GirdX1Y1 = [8, -356]
 GirdX2Y2 = [0, -353]
 
-ZtoTableOffset = 200  #Height from table to aluminum plate
+Yaw = 20 #Positive numbers trail the gem on a clockwise rotation
+
+ZtoTableOffset = 300  #Height from table to aluminum plate #TODO measure this
+# was 200 before
+#TODO permanently fixture the machine, this is a huge pain to deal with on setup
+
 
 PitchCal = 0
 GirdleCal = 0

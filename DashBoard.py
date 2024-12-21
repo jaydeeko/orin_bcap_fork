@@ -18,20 +18,33 @@ ZcutheightTweak = 12 #Gets added to total cut height, mm. Should really only cha
 #Notes: If GirdleZ is wrong, it impacts zints and girdlez, but all numbers need to be very close to correct or
 #there will be a major mismatch, prone to crashes
 
+ZDopTune = 0.0        #Adjusts the height of the disc from the table
+GirdleTune = 0.0   #Z adjustment for girdle (cut deeper with negative numbers)
 
-Yaw = 20 #Positive numbers trail the gem on a clockwise rotation
+
+
 
 LapProcess = "Rough"  #Rough (360), Medium (1200), Polish (3000), Final polish  (50k)
 GemSteps = ["Pav"] #= Pav, Gird, Crown, CrownT, PavT #TODO-- align labels
 
 Gemscale = 6.0 #Gemscale -- multiplier for gem size. (Target length)/(Print sheet length)
-#TODO -- Gemscale implemented but maybe suspect
+#TODO -- Gemscale is radius of gem (as long as Gird Z =~1)
 
+
+
+
+
+#Gets set every time a new gem is mounted
 Dopheight = 100.0 #Length offset for dop Will have to learn how to measure this
+#TODO correct dopheight
 
+
+#Gets set to zero on new gem, and adjusted after gem flip
 IndexOffset = 0.0   #Degrees of rotation to set dop. Total crapshoot w/ bad transfer dop
-ZTweak = 0.0        #Adjusts the height of the disc from the table
-GirdleTweak = 0.0   #Z adjustment for girdle (cut deeper with negative numbers)
+
+
+
+
 
 Indexcheat = 0 #Index Cheater -- offset that gets added each index. Set to 0 at start
 PitchTweak = 0.0 #Pitch Cheater -- shouldnt change other than initial setup. Set to 0 at start
