@@ -2,16 +2,16 @@ offline_mode = False #False = real run. True = test mode
 indexwheelreal= 360/96 #Technically, degrees per index. Facetomatic uses this for planes.csv, doesn't impact CAM
 
 #X1Y1, X2Y2 that cuts oscillate between
-X1Y1 = [8, -356]
+X1Y1 = [8, -367]
 X2Y2 = [0, -353]
 
 #Oscillation points for Girdle
 GirdX1Y1 = [8, -356]
 GirdX2Y2 = [0, -353]
 
-Yaw = 20 #Positive numbers trail the gem on a clockwise rotation
+Yaw = 0 #Positive numbers trail the gem on a clockwise rotation
 
-ZtoTableOffset = 300  #Height from table to aluminum plate #TODO measure this
+ZtoTableOffset = 205.25  #Height from table to aluminum plate #TODO measure this
 # was 200 before
 #TODO permanently fixture the machine, this is a huge pain to deal with on setup
 
@@ -29,7 +29,7 @@ joint_positions = [-90, 12, 155, 0, -70, -20] #Safe position
 
 #TODO For lapprocesses, DOC can be converted to an absolute height using max material diameter so that initial rough pass is tight
 LapProcesses = { # DiscHeight    ZDOC   ZDepthTot    SpeedBase          FlatSweep
-        "Rough":  [2,             .1,          8,         300,              5],
+        "Rough":  [2,             1,          8,         300,              50],
         "Medium": [2,            0.05,          1,         200,              5],
         "Polish": [2,            0.01,        0.2,         150,             10],
         "FinPol": [12,           0.001,       0.05,        100,             50]

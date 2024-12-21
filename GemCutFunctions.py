@@ -68,7 +68,7 @@ def execute_grind_cut_prime(client, robot_handle, facet, move_speed, offline_mod
     """
 
     cut_position = GrindCutPrime(facet)
-    Pose = [cut_position, "L", "@0"]
+    Pose = [cut_position, "@0"]
 
     if offline_mode:
         pass
@@ -87,7 +87,7 @@ def execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode=True
     """
 
     cut_position = GrindCut(facet)
-    Pose = [cut_position, "L", "@0"]
+    Pose = [cut_position, "@0"]
 
     if offline_mode:
         pass
@@ -142,13 +142,13 @@ def FacetLoop(row, step, client, robot_handle):
 
     if abs(float(row["Pitch"])) >= GirdleBoundary:
         print("NotGirdle")
-        CyclePrime(client, robot_handle, X1Y1, X2Y2, Zstart, Zstop, ZDOC, facI, facP, move_speed, offline_mode) #TODO fix
+        run_cycle_prime(client, robot_handle, X1Y1, X2Y2, Zstart+ 0.0001, Zstart, ZDOC, facI, facP, move_speed, offline_mode) #TODO fix
         run_cycle_between_positions(client, robot_handle, X1Y1, X2Y2, Zstart, ZStop, ZDOC, facI, facP, move_speed, offline_mode)
         final_sweep(client, robot_handle, X1Y1, X2Y2, ZStop, FlatSweeps, facI, facP, move_speed, offline_mode)
 
     if abs(float(row["Pitch"])) < GirdleBoundary:
         print("Girdleish")
-        CyclePrime(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, Zstop, ZDOC, facI, facP, move_speed, offline_mode)  #TODO FIX
+        run_cycle_prime(client, robot_handle, GirdX1Y1, GirdX2Y2+ 0.0001, Zstart, Zstart, ZDOC, facI, facP, move_speed, offline_mode)  #TODO FIX
         run_cycle_between_positions(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, ZStop, ZDOC, facI, facP, move_speed, offline_mode)
         final_sweep(client, robot_handle, GirdX1Y1, GirdX2Y2, ZStop, FlatSweeps, facI, facP, move_speed, offline_mode)
 
@@ -198,7 +198,7 @@ def GirdleLoop(row, step, client, robot_handle):
     facI = index  # Index in degrees
 
     #TODO Prime the row, use -3 fig, move with current motion
-    CyclePrime(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, Zstop, ZDOC, facI, facP, move_speed, offline_mode)
+    run_cycle_prime(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, Zstop, ZDOC, facI, facP, move_speed, offline_mode)
 
     #TODO make sure this runs with -1 fig and linear motion
     run_cycle_between_positions(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, Zstop, ZDOC, facI, facP, move_speed, offline_mode)
@@ -207,34 +207,21 @@ def GirdleLoop(row, step, client, robot_handle):
 
     print("GirdLoop complete.")
 
-def Cycleprime(client, robot_handle, X1Y1, X2Y2, Zstart, Zfinal, Zdelta, facI, facP, move_speed, offline_mode):
+
+
+def run_cycle_prime(client, robot_handle, X1Y1, X2Y2, Zstart, Zfinal, Zdelta, facI, facP, move_speed, offline_mode):
     """
     Cycle between two positions while lowering Z from Zstart to Zfinal, lowering Z by Zdelta/2 each step.
     """
     current_Z = Zstart
-    if Zdelta <= 0:
-        print("Error: Zdelta must be greater than 0 to lower Z.")
-        return
-
-    while current_Z > Zfinal:  # Use '>' to prevent infinite loop when current_Z equals Zfinal
-        # Move to the first position
-        facX, facY = X1Y1
-        pose = [facX, facY, current_Z, facI, facP]
-        execute_grind_cut(client, robot_handle, pose, move_speed, offline_mode)
-
-        # Lower Z by Zdelta / 2
-        current_Z = round(max(current_Z - (Zdelta / 2), Zfinal), 4)
-
-        # Move to the second position
-        facX, facY = X2Y2
-        pose = [facX, facY, current_Z, facI, facP]
-        execute_grind_cut(client, robot_handle, pose, move_speed, offline_mode)
-
-        # Lower Z by another Zdelta / 2
-        current_Z = round( max(current_Z - (Zdelta / 2), Zfinal), 4)
+    facX, facY = X1Y1
+    pose = [facX, facY, current_Z, facI, facP]
+    execute_grind_cut_prime(client, robot_handle, pose, move_speed, offline_mode)
 
 
-    print("Zfinal reached. Cycle complete.")
+    print("Figure is primed")
+
+
 
 def run_cycle_between_positions(client, robot_handle, X1Y1, X2Y2, Zstart, Zfinal, Zdelta, facI, facP, move_speed, offline_mode):
     """

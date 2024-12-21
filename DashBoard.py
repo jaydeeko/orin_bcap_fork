@@ -25,7 +25,7 @@ GirdleTune = 0.0   #Z adjustment for girdle (cut deeper with negative numbers)
 
 
 LapProcess = "Rough"  #Rough (360), Medium (1200), Polish (3000), Final polish  (50k)
-GemSteps = ["Pav"] #= Pav, Gird, Crown, CrownT, PavT #TODO-- align labels
+GemSteps = ["PavT"] #= Pav, Gird, Crown, CrownT, PavT #TODO-- align labels
 
 Gemscale = 6.0 #Gemscale -- multiplier for gem size. (Target length)/(Print sheet length)
 #TODO -- Gemscale is radius of gem (as long as Gird Z =~1)
@@ -35,7 +35,7 @@ Gemscale = 6.0 #Gemscale -- multiplier for gem size. (Target length)/(Print shee
 
 
 #Gets set every time a new gem is mounted
-Dopheight = 100.0 #Length offset for dop Will have to learn how to measure this
+Dopheight = 30 + 67.0 #Length offset for dop Will have to learn how to measure this
 #TODO correct dopheight
 
 
