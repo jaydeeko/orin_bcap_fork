@@ -99,29 +99,29 @@ def execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode=True
 
 def FacetLoop(row, step, client, robot_handle):
 
-    tool_pose = [[0, 0, Dopheight + abs((float(row["ZIntercept"]) * Gemscale)), 0, 0, 0], "P"]
+    tool_pose = [[0, 0, Dopheight - abs(ZDopTune) + abs((float(row["ZIntercept"]) * Gemscale)), 0, 0, 0], "P"]
     client.robot_execute(robot_handle, "SetToolDef", [1, tool_pose])
 
     current_tool_def = client.robot_execute(robot_handle, "GetToolDef", 1)
     print(f"Current dopheight is {current_tool_def[2]}")
 
-    DiscHeight = LapProcesses[step][0]
+    DiscHeight = LapProcesses[step][0] #TODO remove discheight from everywhere
 
     ZDOC = LapProcesses[step][1]
-    ZDepthTot = LapProcesses[step][2]
+    ZDepthTot = LapProcesses[step][2]  #TODO maybe this should be an independent parameter
     SpeedBase = LapProcesses[step][3]
-    #TODO Utilize speedbase
+    #TODO Utilize speedbase, or change speedbase to string based on step column
     FlatSweeps = LapProcesses[step][4]
 
 
     # Prepares the robot for operation if not in offline mode
     if not offline_mode:
         Pose = [joint_positions, "J"]
-        client.robot_move(robot_handle, 1, Pose, move_speed)
+        client.robot_move(robot_handle, 2, Pose, move_speed_rapid)
         print("facetloopstart")
 
-    z_disc = DiscHeight + ZtoTableOffset + ZDopTune  # Adjust for Z intercept and table offset ##TODO Align ZTweak to girdle, used differently
-    ZStop = z_disc + ZDopTune
+    z_disc = DiscHeight + ZtoTableOffset   # Adjust for Z intercept and table offset ##TODO Align ZTweak to girdle, used differently
+    ZStop = z_disc
 
     Zstart = ZStop + ZDepthTot
 
@@ -142,15 +142,15 @@ def FacetLoop(row, step, client, robot_handle):
 
     if abs(float(row["Pitch"])) >= GirdleBoundary:
         print("NotGirdle")
-        run_cycle_prime(client, robot_handle, X1Y1, X2Y2, Zstart+ 0.0001, Zstart, ZDOC, facI, facP, move_speed, offline_mode) #TODO fix
-        run_cycle_between_positions(client, robot_handle, X1Y1, X2Y2, Zstart, ZStop, ZDOC, facI, facP, move_speed, offline_mode)
-        final_sweep(client, robot_handle, X1Y1, X2Y2, ZStop, FlatSweeps, facI, facP, move_speed, offline_mode)
+        run_cycle_prime(client, robot_handle, X1Y1, X2Y2, Zstart + 0.0001, Zstart, ZDOC, facI, facP, Move_Speed_Cut, offline_mode) #TODO fix
+        run_cycle_between_positions(client, robot_handle, X1Y1, X2Y2, Zstart, ZStop, ZDOC, facI, facP, Move_Speed_Cut, offline_mode)
+        final_sweep(client, robot_handle, X1Y1, X2Y2, ZStop, FlatSweeps, facI, facP, Move_Speed_Cut, offline_mode)
 
     if abs(float(row["Pitch"])) < GirdleBoundary:
         print("Girdleish")
-        run_cycle_prime(client, robot_handle, GirdX1Y1, GirdX2Y2+ 0.0001, Zstart, Zstart, ZDOC, facI, facP, move_speed, offline_mode)  #TODO FIX
-        run_cycle_between_positions(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, ZStop, ZDOC, facI, facP, move_speed, offline_mode)
-        final_sweep(client, robot_handle, GirdX1Y1, GirdX2Y2, ZStop, FlatSweeps, facI, facP, move_speed, offline_mode)
+        run_cycle_prime(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart + 0.0001, Zstart, ZDOC, facI, facP, Move_Speed_Cut, offline_mode)  #TODO FIX
+        run_cycle_between_positions(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, ZStop, ZDOC, facI, facP, Move_Speed_Cut, offline_mode)
+        final_sweep(client, robot_handle, GirdX1Y1, GirdX2Y2, ZStop, FlatSweeps, facI, facP, Move_Speed_Cut, offline_mode)
 
     # print(X1Y1, X2Y2, Zstart, Ztable, ZDOC, facI, facP, move_speed, offline_mode)
 
@@ -159,7 +159,8 @@ def FacetLoop(row, step, client, robot_handle):
 def GirdleLoop(row, step, client, robot_handle):
     # Determine the Z offset based on conditions
     #TODO Girdle needs less space
-    tool_pose = [[0, 0, Dopheight, 0, 0, 0], "P"] #This P should never change
+
+    tool_pose = [[0, 0, Dopheight - ZDopTune, 0, 0, 0], "P"] #This P should never change
 
     client.robot_execute(robot_handle, "SetToolDef", [1, tool_pose])
 
@@ -176,18 +177,21 @@ def GirdleLoop(row, step, client, robot_handle):
 
     DiscHeight = LapProcesses[step][0]
     ZDOC = LapProcesses[step][1]
-    ZDepthTot = LapProcesses[step][2]
+
+    #ZDepthTot = LapProcesses[step][2]
+    ZDepthTot = abs(MaxMaterialDiameter/2 - GirdleZ + 5)
+
     SpeedBase = LapProcesses[step][3]
     FlatSweeps = LapProcesses[step][4]
 
     # Prepares the robot for operation if not in offline mode
     if not offline_mode:
         Pose = [joint_positions, "J"]
-        client.robot_move(robot_handle, 1, Pose, move_speed)
+        client.robot_move(robot_handle, 1, Pose, move_speed_rapid)
         print("facetloopstart")
 
     z_disc = DiscHeight + ZtoTableOffset # Adjust for Z intercept and table offset
-    Zstop = z_disc + ZDopTune + GirdleZ
+    Zstop = z_disc + GirdleTune + GirdleZ
     Zstart = Zstop + ZDepthTot
 
 
@@ -197,17 +201,13 @@ def GirdleLoop(row, step, client, robot_handle):
     facP = pitch
     facI = index  # Index in degrees
 
-    #TODO Prime the row, use -3 fig, move with current motion
-    run_cycle_prime(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, Zstop, ZDOC, facI, facP, move_speed, offline_mode)
+    run_cycle_prime(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, Zstop, ZDOC, facI, facP, Move_Speed_Cut, offline_mode)
 
-    #TODO make sure this runs with -1 fig and linear motion
-    run_cycle_between_positions(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, Zstop, ZDOC, facI, facP, move_speed, offline_mode)
+    run_cycle_between_positions(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstart, Zstop, ZDOC, facI, facP, Move_Speed_Cut, offline_mode)
 
-    final_sweep(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstop, FlatSweeps, facI, facP, move_speed, offline_mode)
+    final_sweep(client, robot_handle, GirdX1Y1, GirdX2Y2, Zstop, FlatSweeps, facI, facP, Move_Speed_Cut, offline_mode)
 
     print("GirdLoop complete.")
-
-
 
 def run_cycle_prime(client, robot_handle, X1Y1, X2Y2, Zstart, Zfinal, Zdelta, facI, facP, move_speed, offline_mode):
     """
@@ -220,8 +220,6 @@ def run_cycle_prime(client, robot_handle, X1Y1, X2Y2, Zstart, Zfinal, Zdelta, fa
 
 
     print("Figure is primed")
-
-
 
 def run_cycle_between_positions(client, robot_handle, X1Y1, X2Y2, Zstart, Zfinal, Zdelta, facI, facP, move_speed, offline_mode):
     """
