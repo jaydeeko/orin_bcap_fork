@@ -1,6 +1,8 @@
-from DashBoard import RoughDepthofCut
+from DashBoard_temp import RoughDOC
 
-offline_mode = False #False = real run. True = test mode
+offline_mode = True #False = real run. True = test mode
+#TODO Convert to "RealRun" -> True when running. If RealRun = True
+
 indexwheelreal= 360/96 #Technically, degrees per index. Facetomatic uses this for planes.csv to determine facet number, gemcut uses it to calc back to angles
 
 #X1Y1, X2Y2 that cuts oscillate between
@@ -55,3 +57,4 @@ TIMEOUT = 2000  # Timeout in milliseconds
 robot_name = "vp6242a"  # Name of the robot in the controller
 move_speed_rapid = "Speed=100"  # Movement speed
 
+#CONFIG

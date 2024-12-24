@@ -1,6 +1,6 @@
 from scipy.spatial.transform import Rotation as R
 from math import radians
-from DashBoard import *
+from DashBoard_temp import *
 from GemCutHardcode import *
 
 def pose_trans(p_from, p_from_to):

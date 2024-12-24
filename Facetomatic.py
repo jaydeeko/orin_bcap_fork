@@ -3,7 +3,7 @@ from stl import mesh
 import matplotlib.pyplot as plt
 import math
 import csv
-from DashBoard import GemName
+from DashBoard_temp import GemName
 
 stl_file = GemName #sources from Dashboard
 
