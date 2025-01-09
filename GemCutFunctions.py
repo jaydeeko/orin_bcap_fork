@@ -21,9 +21,12 @@ def GrindCutPrime(facetdata):
     x, y, z, index, pitch = facetdata
 
     tool_rotation = R.from_euler('z', radians(index), degrees=False)
-    world_rotation = R.from_euler('x', radians(pitch), degrees=False)
+    #world_rotation = R.from_euler('x', radians(pitch), degrees=False)
+    world_rotation = R.from_euler('x', radians(-pitch), degrees=False)
 
-    initial_rotation = R.from_euler('xyz', [radians(90), 0, radians(Yaw)], degrees=False)
+
+    #initial_rotation = R.from_euler('xyz', [radians(90), 0, radians(Yaw)], degrees=False)
+    initial_rotation = R.from_euler('xyz', [radians(90), 0, radians(Yaw+180)], degrees=False)
     combined_rotation = world_rotation * initial_rotation * tool_rotation
     final_orientation = combined_rotation.as_euler('xyz', degrees=True)
 
@@ -40,11 +43,11 @@ def GrindCutPrime(facetdata):
 
 def GrindCut(facetdata):
     x, y, z, index, pitch = facetdata
-
     tool_rotation = R.from_euler('z', radians(index), degrees=False)
-    world_rotation = R.from_euler('x', radians(pitch), degrees=False)
+    world_rotation = R.from_euler('x', radians(-pitch), degrees=False)
 
-    initial_rotation = R.from_euler('xyz', [radians(90), 0, radians(Yaw)], degrees=False)
+    initial_rotation = R.from_euler('xyz', [radians(90), 0, radians(Yaw+180)], degrees=False)
+    #initial_rotation = R.from_euler('xyz', [radians(90), radians(0), radians(Yaw+180)], degrees=False)
     combined_rotation = world_rotation * initial_rotation * tool_rotation
     final_orientation = combined_rotation.as_euler('xyz', degrees=True)
 
@@ -75,7 +78,7 @@ def execute_grind_cut_prime(client, robot_handle, facet, move_speed, offline_mod
         #print("moved", facet)
         #print(f"[Offline Mode] Skipped: robot_move with Pose={Pose} and move_speed={move_speed}")
     else:
-        print(robot_handle, Pose, move_speed, client)
+        print("Pose Primed")
         client.robot_move(robot_handle, 1, Pose, "") #1 works, #2 is linear motion, but jams on figure
 
 def execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode=True):
@@ -94,7 +97,7 @@ def execute_grind_cut(client, robot_handle, facet, move_speed, offline_mode=True
         #print("moved", facet)
         #print(f"[Offline Mode] Skipped: robot_move with Pose={Pose} and move_speed={move_speed}")
     else:
-        print(robot_handle, Pose, move_speed, client)
+        #print("Z target = ", cut_position[2])
         client.robot_move(robot_handle, 2, Pose, "") #1 works, #2 is linear motion, but jams on figure
 
 def FacetLoop(row, step, client, robot_handle):
@@ -117,7 +120,7 @@ def FacetLoop(row, step, client, robot_handle):
     # Prepares the robot for operation if not in offline mode
     if not offline_mode:
         Pose = [joint_positions, "J"]
-        client.robot_move(robot_handle, 2, Pose, move_speed_rapid)
+        client.robot_move(robot_handle, 1, Pose, move_speed_rapid)
         print("facetloopstart")
 
     z_disc = DiscHeight + ZtoTableOffset   # Adjust for Z intercept and table offset ##TODO Align ZTweak to girdle, used differently
@@ -231,6 +234,7 @@ def run_cycle_between_positions(client, robot_handle, X1Y1, X2Y2, Zstart, Zfinal
         return
 
     while current_Z > Zfinal:  # Use '>' to prevent infinite loop when current_Z equals Zfinal
+        print("Current Z =", current_Z, "Z final =", Zfinal)
         # Move to the first position
         facX, facY = X1Y1
         pose = [facX, facY, current_Z, facI, facP]

@@ -33,7 +33,7 @@ try:
         print(f"Current dopheight is {current_tool_def[2]}")
 
         JointReset = [joint_positions, "J"]
-        client.robot_move(robot_handle, 1, JointReset, move_speed)
+        client.robot_move(robot_handle, 1, JointReset, move_speed_rapid)
 
     else:
         client = 0
@@ -60,7 +60,7 @@ try:
             #TODO Think about adding a separate table loop function
 
     #Joint Reset to safe position
-    client.robot_move(robot_handle, 1, JointReset, move_speed)
+    client.robot_move(robot_handle, 1, JointReset, move_speed_rapid)
 
     if offline_mode == False:
         client.robot_execute(robot_handle, "GiveArm")

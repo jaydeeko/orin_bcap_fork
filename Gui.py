@@ -15,7 +15,22 @@ def create_active_files():
     if not os.path.exists(DASHBOARD_ACTIVE):
         shutil.copy(DASHBOARD_TEMPLATE, DASHBOARD_ACTIVE)
     if not os.path.exists(PLANES_ACTIVE):
-        shutil.copy(PLANES_TEMPLATE, PLANES_ACTIVE)
+        # Copy template and add 'Status' column with 'Pending' for all rows
+        with open(PLANES_TEMPLATE, "r") as template_file:
+            csv_reader = csv.DictReader(template_file)
+            rows = list(csv_reader)
+
+            # Ensure 'Status' column exists
+            if rows and 'Status' not in rows[0]:
+                for row in rows:
+                    row['Status'] = "Pending"
+
+            # Write to active file
+            with open(PLANES_ACTIVE, "w", newline="") as active_file:
+                fieldnames = csv_reader.fieldnames + ['Status'] if 'Status' not in csv_reader.fieldnames else csv_reader.fieldnames
+                writer = csv.DictWriter(active_file, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(rows)
 
 # Function to load parameters from Dashboard_active.py
 def load_parameters():
@@ -73,14 +88,19 @@ def run_selected_rows():
     try:
         file_path = PLANES_ACTIVE
         if not os.path.exists(file_path):
-            shutil.copy(PLANES_TEMPLATE, file_path)
+            create_active_files()
 
         with open(file_path, "r") as csv_file:
             csv_reader = csv.DictReader(csv_file)
             rows = list(csv_reader)
+            completed_rows = []
 
-        # Open the file for appending run results
-        with open(file_path, "a") as csv_file:
+        # Open the file for updating run results
+        with open(file_path, "w", newline="") as csv_file:
+            fieldnames = rows[0].keys() if rows else []
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            writer.writeheader()
+
             for i, (row, var) in enumerate(zip(rows, check_vars)):
                 if var.get():
                     step = row.get("Step", "").strip()
@@ -93,11 +113,18 @@ def run_selected_rows():
                     else:
                         continue
 
-                    # Log run completion with Dopheight
-                    dopheight = parameters.get("Dopheight", "Unknown")
-                    csv_file.write(f"{row}, Run, Dop = {dopheight}\n")
+                    # Update row status and move to completed
+                    row["Status"] = f"Cut, {parameters.get('Dopheight', 'Unknown')}"
+                    completed_rows.append(row)
+                else:
+                    writer.writerow(row)
 
-        messagebox.showinfo("Success", "Selected rows have been run.")
+            # Append completed rows at the bottom
+            for completed_row in completed_rows:
+                writer.writerow(completed_row)
+
+        messagebox.showinfo("Success", "Selected rows have been run and moved to the bottom.")
+        load_csv()  # Reload the CSV to reflect updates in the GUI
     except Exception as e:
         messagebox.showerror("Error", f"Unable to run selected rows: {e}")
 
@@ -106,18 +133,41 @@ def load_csv():
     try:
         file_path = PLANES_ACTIVE
         if not os.path.exists(file_path):
-            shutil.copy(PLANES_TEMPLATE, file_path)
+            create_active_files()
 
-        with open(file_path, "r") as csv_file:
+        with open(file_path, "r", newline="") as csv_file:
             csv_reader = csv.DictReader(csv_file)
             global check_vars
             check_vars = []
-            for row in csv_reader:
+
+            # Clear previous rows
+            for widget in csv_rows_frame.winfo_children():
+                widget.destroy()
+
+            # Add headers
+            headers = csv_reader.fieldnames
+            if headers is None:
+                raise ValueError("The CSV file has no headers. Please check the file format.")
+
+            headers_display = tk.Label(csv_rows_frame, text=" | ".join(headers), anchor="w", justify="left", font=("Helvetica", 10, "bold"))
+            headers_display.grid(row=0, column=0, sticky="w")
+
+            # Add rows with checkboxes
+            for row_index, row in enumerate(csv_reader, start=1):
                 var = tk.BooleanVar()
-                checkbutton = tk.Checkbutton(csv_frame, text=row, variable=var)
-                checkbutton.pack(anchor="w")
+                row_display = " | ".join(row.get(header, "") for header in headers)
+                checkbutton = tk.Checkbutton(csv_rows_frame, text=row_display, variable=var, anchor="w", justify="left")
+                checkbutton.grid(row=row_index, column=0, sticky="w")
                 check_vars.append(var)
 
+            # Update canvas scroll region
+            csv_canvas.update_idletasks()
+            csv_canvas.configure(scrollregion=csv_canvas.bbox("all"))
+
+    except FileNotFoundError:
+        messagebox.showerror("Error", f"The file {PLANES_ACTIVE} was not found.")
+    except ValueError as ve:
+        messagebox.showerror("Error", str(ve))
     except Exception as e:
         messagebox.showerror("Error", f"Unable to load CSV file: {e}")
 
@@ -146,10 +196,23 @@ save_button.pack(padx=5, pady=5)
 csv_frame = tk.LabelFrame(root, text="CSV Processing")
 csv_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-load_csv_button = tk.Button(csv_frame, text="Load CSV", command=load_csv)
+csv_canvas = tk.Canvas(csv_frame)
+csv_canvas.pack(side="left", fill="both", expand=True)
+
+csv_scrollbar = tk.Scrollbar(csv_frame, orient="vertical", command=csv_canvas.yview)
+csv_scrollbar.pack(side="right", fill="y")
+
+csv_canvas.configure(yscrollcommand=csv_scrollbar.set)
+
+csv_rows_frame = tk.Frame(csv_canvas)
+csv_canvas.create_window((0, 0), window=csv_rows_frame, anchor="nw")
+
+csv_rows_frame.bind("<Configure>", lambda e: csv_canvas.configure(scrollregion=csv_canvas.bbox("all")))
+
+load_csv_button = tk.Button(root, text="Load CSV", command=load_csv)
 load_csv_button.pack(padx=5, pady=5)
 
-run_button = tk.Button(csv_frame, text="Run Selected Rows", command=run_selected_rows)
+run_button = tk.Button(root, text="Run Selected Rows", command=run_selected_rows)
 run_button.pack(padx=5, pady=5)
 
 # Create active files and load parameters

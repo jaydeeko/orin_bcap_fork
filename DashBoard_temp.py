@@ -15,23 +15,26 @@ LapProcess = "Rough"    #INFO:       "Rough"         "Medium"          "Finish" 
 
 Move_Speed_Cut = "Speed=100"
 
-RoughDOC = 12           #This is the depth of cut for rough passes
+RoughDOC = 5           #This is the depth of cut for rough passes #FIXME This is not a good name. Not per pass DOC, total depth of process
 #INFO: After a cut, add RoughDOC to ZDopTune and clear RoughDOC for new cut
 
-ZDopTune = 0.0         #Adjusts the TCP  <--- #if you cut a 10mm OD disc and it measures 10.02, change this to 0.01
+ZDopTune = 5         #Adjusts the TCP  <--- #if you cut a 10mm OD disc and it measures 10.02, change this to 0.01
 GirdleTune = 0.0       #Z adjustment for girdle (cut deeper with negative numbers)
 
-MaxMaterialDiameter = 0
+MaxMaterialDiameter = 30
 
-GemSteps = ["PavT"] #= Pav, Gird, Crown, CrownT, PavT
+GemSteps = ["Pav"] #= Pav, Gird, Crown, CrownT, PavT
 
 #TODO -- align labels
 
-Gemscale = 6.0 #Gemscale -- multiplier for gem size
+Gemscale = 12.0 #Gemscale -- multiplier for gem size
 #INFO -- GemScale is radius of gem (as long as Gird Z =~1)
 
+ZtoTableOffset = 187.68  #Height from table to aluminum plate, set with 67mm TCP and 90 degree setting on tool, lower to contact with disc
+# was 200 before
+
 #Gets set every time a new gem is mounted
-Dopheight = 30 + 67.0 #Length offset for dop Will have to learn how to measure this
+Dopheight = 313.72 - ZtoTableOffset - 3    #Length offset for dop Will have to learn how to measure this
 
 #INFO Use 67mm for TCP to determine tabletop (remove dop)
 #INFO Measure this with the robot and dop mounted
